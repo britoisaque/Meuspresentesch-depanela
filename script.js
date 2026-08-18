@@ -32,6 +32,25 @@ const ADMIN_UIDS = [
 ];
 
 /* ---------------------------------------------------------------------
+   2.1. CONVIDADOS AUTORIZADOS
+   Como este site NÃO é aberto ao público, só os e-mails do Google
+   listados aqui (em minúsculas) conseguem permanecer logados.
+   Se alguém logar com um e-mail que não está nesta lista, o site
+   desconecta automaticamente essa conta.
+   Administradores (ADMIN_UIDS) sempre podem entrar, mesmo que o
+   e-mail deles não esteja nesta lista.
+   Deixe a lista vazia ([]) apenas durante testes — com ela vazia,
+   QUALQUER conta Google consegue logar.
+--------------------------------------------------------------------- */
+const ALLOWED_EMAILS = [
+  // "y.vitoria.s.oliveira@gmail.com",
+  // "isaquebrito22052006@gmail.com",
+];
+function normalizarEmail(email){
+  return String(email ?? "").trim().toLowerCase();
+}
+
+/* ---------------------------------------------------------------------
    3. CATEGORIAS — estrutura centralizada
    Para adicionar/editar/remover uma categoria, mexa SOMENTE aqui.
    `key` é o identificador salvo no Firestore (não acentuado, minúsculo).
@@ -140,6 +159,19 @@ document.getElementById("btn-google-login").addEventListener("click", async () =
 document.getElementById("btn-logout").addEventListener("click", () => auth.signOut());
 
 auth.onAuthStateChanged(user => {
+  // Bloqueia contas que não estão na lista de convidados autorizados
+  // (administradores sempre passam, mesmo se não estiverem na lista).
+  if (user){
+    const admin = ADMIN_UIDS.includes(user.uid);
+    const emailPermitido = ALLOWED_EMAILS.length === 0 ||
+      ALLOWED_EMAILS.map(normalizarEmail).includes(normalizarEmail(user.email));
+    if (!admin && !emailPermitido){
+      auth.signOut();
+      toast("Este e-mail não está na lista de convidados deste Chá de Panela.", "error");
+      return; // onAuthStateChanged será chamado de novo com user = null
+    }
+  }
+
   currentUser = user;
   isAdmin = !!(user && ADMIN_UIDS.includes(user.uid));
 
