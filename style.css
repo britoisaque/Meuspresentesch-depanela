@@ -508,6 +508,7 @@ input,select{ font-family:inherit; }
   display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.8rem;
   z-index:300; color:var(--olive-700);
 }
+
 .loading-sprig svg{ width:44px; height:44px; animation:spin 1.6s linear infinite; }
 @keyframes spin{ to{ transform:rotate(360deg); } }
 
@@ -523,3 +524,10 @@ input,select{ font-family:inherit; }
 
 /* Focus visibility for accessibility */
 :focus-visible{ outline:2px solid var(--olive-600); outline-offset:2px; }
+
+/* =====================================================
+   REGRA GLOBAL: garante que [hidden] sempre vença classes
+   que definem display (flex/inline-flex/grid), evitando
+   elementos "escondidos" que continuam aparecendo.
+   ===================================================== */
+[hidden]{ display:none !important; }
