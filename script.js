@@ -28,7 +28,7 @@ const firebaseConfig = {
    nas Firestore Security Rules (ver README.md, parte de segurança).
 --------------------------------------------------------------------- */
 const ADMIN_UIDS = [
-   "KljVBFhZGGSFaKhAzmX9EnHWQ6p2" 
+   "KljVBFhZGGSFaKhAzmX9EnHWQ6p2",
    "beRAJ8eSfSVkDm3COfMH3lbLHNA2" 
 ];
 
