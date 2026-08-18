@@ -45,6 +45,7 @@ const ADMIN_UIDS = [
 const ALLOWED_EMAILS = [
   // "y.vitoria.s.oliveira@gmail.com",
   // "isaquebrito22052006@gmail.com",
+   // "marcos.brito.audio@gmail.com",
 ];
 function normalizarEmail(email){
   return String(email ?? "").trim().toLowerCase();
