@@ -1,4 +1,4 @@
-/* =====================================================================
+   /* =====================================================================
    CHÁ DE PANELA — ISAQUE & YASMIM
    script.js — lógica completa do site (Vanilla JS)
    ===================================================================== */
@@ -28,7 +28,7 @@ const firebaseConfig = {
    nas Firestore Security Rules (ver README.md, parte de segurança).
 --------------------------------------------------------------------- */
 const ADMIN_UIDS = [
-  "COLOQUE_SEU_USER_ID"
+  "COLOCAR_UID_DO_ADMIN_AQUI"
 ];
 
 /* ---------------------------------------------------------------------
@@ -43,9 +43,9 @@ const ADMIN_UIDS = [
    QUALQUER conta Google consegue logar.
 --------------------------------------------------------------------- */
 const ALLOWED_EMAILS = [
-  // "y.vitoria.s.oliveira@gmail.com",
-  // "isaquebrito22052006@gmail.com",
-   // "marcos.brito.audio@gmail.com",
+      // "y.vitoria.s.oliveira@gmail.com",
+      // "isaquebrito22052006@gmail.com",
+      // "marcos.brito.audio@gmail.com",
 ];
 function normalizarEmail(email){
   return String(email ?? "").trim().toLowerCase();
@@ -193,10 +193,11 @@ auth.onAuthStateChanged(user => {
       photo.style.display = "none";
     }
     btnAdmin.hidden = !isAdmin;
-    if (!ADMIN_UIDS.includes("COLOCAR_UID_DO_ADMIN_AQUI")) {
-      // configurado normalmente, nada a fazer
-    } else {
-      console.info("Seu UID do Firebase é:", user.uid, "— copie-o para ADMIN_UIDS em script.js se quiser ser administrador.");
+    if (!isAdmin){
+      console.info(
+        "Seu UID do Firebase é:", user.uid,
+        "— copie-o para ADMIN_UIDS em script.js e crie um documento com esse ID na coleção 'admins' do Firestore, se quiser que essa conta seja administradora."
+      );
     }
   } else {
     signedOut.hidden = false;
