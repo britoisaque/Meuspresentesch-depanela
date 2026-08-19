@@ -1,4 +1,4 @@
-   /* =====================================================================
+/* =====================================================================
    CHÁ DE PANELA — ISAQUE & YASMIM
    script.js — lógica completa do site (Vanilla JS)
    ===================================================================== */
@@ -31,7 +31,6 @@ const ADMIN_UIDS = [
    "KljVBFhZGGSFaKhAzmX9EnHWQ6p2",
    "beRAJ8eSfSVkDm3COfMH3lbLHNA2" 
 ];
-
 /* ---------------------------------------------------------------------
    2.1. CONVIDADOS AUTORIZADOS
    Como este site NÃO é aberto ao público, só os e-mails do Google
@@ -389,6 +388,7 @@ function handleChoosePresente(id, nome){
 
   pendingChoice = { id, nome };
   document.getElementById("modal-confirm-item").textContent = nome;
+  document.getElementById("modal-confirm-nome").value = currentUser.displayName || "";
   document.getElementById("modal-confirm").hidden = false;
 }
 
@@ -400,6 +400,13 @@ document.getElementById("modal-confirm-cancel").addEventListener("click", () => 
 document.getElementById("modal-confirm-ok").addEventListener("click", async () => {
   if (!pendingChoice || !currentUser) return;
   const { id } = pendingChoice;
+
+  const nomeEscolhido = document.getElementById("modal-confirm-nome").value.trim();
+  if (!nomeEscolhido){
+    toast("Digite seu nome antes de confirmar.", "error");
+    return;
+  }
+
   document.getElementById("modal-confirm").hidden = true;
   showLoading(true);
 
@@ -421,7 +428,7 @@ document.getElementById("modal-confirm-ok").addEventListener("click", async () =
 
       tx.update(docRef, {
         escolhido: true,
-        escolhidoPor: currentUser.displayName || "Convidado(a)",
+        escolhidoPor: nomeEscolhido,
         uidEscolhedor: currentUser.uid,
         dataEscolha: firebase.firestore.FieldValue.serverTimestamp()
       });
