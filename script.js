@@ -28,9 +28,9 @@ const firebaseConfig = {
    nas Firestore Security Rules (ver README.md, parte de segurança).
 --------------------------------------------------------------------- */
 const ADMIN_UIDS = [
-   "KljVBFhZGGSFaKhAzmX9EnHWQ6p2",
-   "beRAJ8eSfSVkDm3COfMH3lbLHNA2" 
-];   
+  "KljVBFhZGGSFaKhAzmX9EnHWQ6p2",
+  "beRAJ8eSfSVkDm3COfMH3lbLHNA2"
+];
 
 /* ---------------------------------------------------------------------
    2.1. CONVIDADOS AUTORIZADOS
@@ -44,14 +44,12 @@ const ADMIN_UIDS = [
    QUALQUER conta Google consegue logar.
 --------------------------------------------------------------------- */
 const ALLOWED_EMAILS = [
-      // "y.vitoria.s.oliveira@gmail.com",
-      // "isaquebrito22052006@gmail.com",
-      // "marcos.brito.audio@gmail.com",
+  // "maria@gmail.com",
+  // "joao@gmail.com",
 ];
 function normalizarEmail(email){
   return String(email ?? "").trim().toLowerCase();
 }
-
 
 /* ---------------------------------------------------------------------
    3. CATEGORIAS — estrutura centralizada
