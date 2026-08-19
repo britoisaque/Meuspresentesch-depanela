@@ -30,7 +30,8 @@ const firebaseConfig = {
 const ADMIN_UIDS = [
    "KljVBFhZGGSFaKhAzmX9EnHWQ6p2",
    "beRAJ8eSfSVkDm3COfMH3lbLHNA2" 
-];
+];   
+
 /* ---------------------------------------------------------------------
    2.1. CONVIDADOS AUTORIZADOS
    Como este site NÃO é aberto ao público, só os e-mails do Google
@@ -50,6 +51,7 @@ const ALLOWED_EMAILS = [
 function normalizarEmail(email){
   return String(email ?? "").trim().toLowerCase();
 }
+
 
 /* ---------------------------------------------------------------------
    3. CATEGORIAS — estrutura centralizada
@@ -411,25 +413,31 @@ document.getElementById("modal-confirm-ok").addEventListener("click", async () =
   showLoading(true);
 
   try{
+    const nomeDoPresente = pendingChoice.nome;
     await db.runTransaction(async (tx) => {
       const docRef = presentesRef.doc(id);
-      const snap = await tx.get(docRef);
+      const reservaRef = db.collection("reservas").doc(currentUser.uid);
+
+      // Todas as leituras de uma transação precisam acontecer antes de qualquer escrita.
+      const [snap, reservaSnap] = await Promise.all([tx.get(docRef), tx.get(reservaRef)]);
+
       if (!snap.exists) throw new Error("NAO_ENCONTRADO");
-      const data = snap.data();
+      if (snap.data().escolhido) throw new Error("JA_ESCOLHIDO");
 
-      if (data.escolhido) throw new Error("JA_ESCOLHIDO");
-
-      // Verifica de novo dentro da transação se o usuário já tem presente
-      // (proteção extra contra corrida entre duas abas do mesmo usuário)
-      const meusPresentesSnap = await tx.get(
-        presentesRef.where("uidEscolhedor", "==", currentUser.uid)
-      );
-      if (!meusPresentesSnap.empty) throw new Error("USUARIO_JA_TEM");
+      // "Documento de reserva": garante, de forma atômica, que este UID
+      // ainda não escolheu nenhum outro presente.
+      if (reservaSnap.exists) throw new Error("USUARIO_JA_TEM");
 
       tx.update(docRef, {
         escolhido: true,
         escolhidoPor: nomeEscolhido,
         uidEscolhedor: currentUser.uid,
+        dataEscolha: firebase.firestore.FieldValue.serverTimestamp()
+      });
+
+      tx.set(reservaRef, {
+        presenteId: id,
+        presenteNome: nomeDoPresente,
         dataEscolha: firebase.firestore.FieldValue.serverTimestamp()
       });
     });
