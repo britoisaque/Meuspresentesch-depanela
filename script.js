@@ -356,7 +356,7 @@ function presenteCardHTML(p){
       <span class="presente-card__nome">${escapeHTML(p.nome)}</span>
       <span class="presente-card__status presente-card__status--${status}">${p.escolhido ? "Escolhido" : "Disponível"}</span>
       ${p.escolhido ? `<span class="presente-card__por">Escolhido por ${escapeHTML(p.escolhidoPor || "—")}</span>` : ""}
-      ${!p.escolhido ? `<button class="btn btn--outline presente-card__btn" data-choose-id="${p.id}" data-choose-nome="${escapeAttr(p.nome)}">Escolher presente</button>` : ""}
+      ${!p.escolhido ? `<button class="btn btn--outline presente-card__btn" data-choose-id="${p.id}" data-choose-nome="${escapeAttr(p.nome)}">${isAdmin ? "Cadastrar nome" : "Escolher presente"}</button>` : ""}
     </div>
   `;
 }
@@ -372,6 +372,19 @@ function escapeAttr(str){ return escapeHTML(str).replace(/"/g, "&quot;"); }
 let pendingChoice = null;
 
 function handleChoosePresente(id, nome){
+  // Administradores não "escolhem" um presente para si — eles cadastram o
+  // nome de quem escolheu diretamente, sem passar pelo fluxo de reserva do
+  // convidado (que trava o Google e usa o UID do próprio admin).
+  if (isAdmin){
+    openEditModal(id);
+    const statusSelect = document.getElementById("edit-status");
+    statusSelect.value = "escolhido";
+    toggleEditPorField();
+    document.getElementById("edit-por").value = "";
+    document.getElementById("edit-por").focus();
+    return;
+  }
+
   if (!currentUser){
     toast("Entre com sua conta Google para escolher um presente.", "error");
     document.getElementById("btn-google-login").click();
